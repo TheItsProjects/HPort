@@ -1,0 +1,19 @@
+# Ignore Rider and ReSharper files
+.idea/
+.idea.Rider/
+.idea_modules/
+*.DotSettings.user
+
+# Default
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+
+# Testfiles
+docker-compose.yml
+compose.yml
+.env
+env
+serverStates.json
