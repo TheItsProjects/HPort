@@ -46,6 +46,6 @@ internal partial class ServerRepository
             => $"rm -rf /home/{PortServer.User}/{containerName}";
 
         internal static string GetContainers() =>
-            $"ls -d /home/{PortServer.User}/*/ | cut -d'/' -f4";
+            $"ls -d /home/{PortServer.User}/*/ 2>/dev/null | cut -d'/' -f4";
     }
 }

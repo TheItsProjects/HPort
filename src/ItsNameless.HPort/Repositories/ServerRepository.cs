@@ -410,7 +410,7 @@ internal partial class ServerRepository : IServerRepository
 
             if (sshCommand.ExitStatus is 0)
             {
-                yield return sshCommand.Result.Trim();
+                yield return GetCommandResult(sshCommand);
                 continue;
             }
 
@@ -490,6 +490,21 @@ internal partial class ServerRepository : IServerRepository
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Returns the result of the command, or the error if the result is empty.
+    /// This handling is required because docker commands may return empty
+    /// results with the actual output in the error field (because there was
+    /// an unrelated warning).
+    /// </summary>
+    /// <param name="command">The <see cref="SshCommand"/> to get the result from.</param>
+    /// <returns>The result text.</returns>
+    private static string GetCommandResult(SshCommand command)
+    {
+        return string.IsNullOrEmpty(command.Result.Trim())
+            ? command.Error.Trim()
+            : command.Result.Trim();
     }
 
     private record ServerState

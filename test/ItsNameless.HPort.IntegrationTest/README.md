@@ -18,11 +18,11 @@ as in the end **all** servers will be deleted to ensure no ongoing costs.
 ## Test Context
 
 The integration test essentially runs two main scenarios:
-1. Single Container Scenario (found in `SingleContainerTests.cs`)
+1. Single Container Scenario (found in [`SingleContainerTest.cs`](SingleContainerTest.cs))
    1. Create a new NGINX container on a Hetzner Cloud server.
    2. Verify that the container is running and accessible.
    3. Clean up the container and delete the server.
-2. Multiple Containers Scenario (found in `MultipleContainersTests.cs`)
+2. Multiple Containers Scenario (found in [`MultipleContainersTest.cs`](MultipleContainersTest.cs))
    1. Create a new NGINX container on a Hetzner Cloud server.
    2. Create a second NGINX container on the same server.
    3. Verify that both containers are running and accessible.
