@@ -158,6 +158,13 @@ internal partial class ServerRepository : IServerRepository
             throw;
         }
 
+        await AddServerState(
+            serverName,
+            server.Id,
+            userPassword,
+            cancellationToken
+        );
+
         var errorMessage =
             await ServerIsReady(
                 server.Id,
@@ -171,13 +178,6 @@ internal partial class ServerRepository : IServerRepository
                 $"Server {serverName} is not ready: {errorMessage}"
             );
         }
-
-        await AddServerState(
-            serverName,
-            server.Id,
-            userPassword,
-            cancellationToken
-        );
 
         return new PortServer
         {
@@ -271,22 +271,45 @@ internal partial class ServerRepository : IServerRepository
         }
     }
 
+    /// <summary>
+    /// Checks if a container is running on the given server.
+    /// Retries the check a number of times before failing,
+    /// in case the container is still starting up.
+    /// </summary>
+    /// <param name="serverName">The server to check on.</param>
+    /// <param name="containerName">The name of the container to check for.</param>
+    /// <param name="retries">Number of tries before failing.</param>
+    /// <param name="timeout">Time in milliseconds to wait between each retry.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>Whether the given container is running.</returns>
     public async Task<bool> CheckContainerIsRunning(
         string serverName,
         string containerName,
+        int retries = 3,
+        int timeout = 5000,
         CancellationToken cancellationToken = default)
     {
-        var runningContainers =
-            await ExecuteCommandsOnServer(
-                    serverName,
-                    [
-                        $"docker compose -f /home/{PortServer.User}/{containerName}/docker-compose.yml ps --format '{{{{.Names}}}}'",
-                    ],
-                    cancellationToken
-                )
-                .ToListAsync();
+        for (var i = 0; i < retries; i++)
+        {
+            var runningContainers =
+                await ExecuteCommandsOnServer(
+                        serverName,
+                        [
+                            $"docker compose -f /home/{PortServer.User}/{containerName}/docker-compose.yml ps --format '{{{{.Names}}}}'",
+                        ],
+                        cancellationToken
+                    )
+                    .ToListAsync(cancellationToken);
 
-        return runningContainers.Single() != "";
+            if (runningContainers.Single() != "")
+            {
+                return true;
+            }
+
+            await Task.Delay(timeout, cancellationToken);
+        }
+
+        return false;
     }
 
     private async Task AddServerState(
@@ -458,7 +481,7 @@ internal partial class ServerRepository : IServerRepository
             await CheckContainerIsRunning(
                 server.Name,
                 containerName,
-                cancellationToken
+                cancellationToken: cancellationToken
             );
 
         if (containerIsRunning is false)

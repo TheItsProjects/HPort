@@ -18,8 +18,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="ItsNameless.HPort.Tests" />
-        <InternalsVisibleTo Include="ItsNameless.HPortCli.Tests" />
+        <InternalsVisibleTo Include="ItsNameless.HPort.Test" />
+        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test" />
         <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
     </ItemGroup>
 

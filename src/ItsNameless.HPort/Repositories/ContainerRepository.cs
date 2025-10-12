@@ -112,7 +112,7 @@ internal class ContainerRepository : IContainerRepository
                 await _serverRepository.CheckContainerIsRunning(
                     existingServer.Name,
                     containerName,
-                    cancellationToken
+                    cancellationToken: cancellationToken
                 );
 
             if (containerIsRunning is false)

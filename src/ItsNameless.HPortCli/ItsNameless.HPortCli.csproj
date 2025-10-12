@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="ItsNameless.HPortCli.Tests" />
+        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test" />
     </ItemGroup>
 
     <ItemGroup>
