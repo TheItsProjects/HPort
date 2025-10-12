@@ -11,26 +11,28 @@ public class TestBase
     private string _token;
     private Fakers _fakers;
     protected TestConfig _testConfig;
+    protected TestConfig _otherTestConfig;
     protected HPort _sut;
     protected HetznerCloudClient _hClient;
 
-    public record TestConfig
+    protected record TestConfig
     {
         public readonly string ComposeFileName = "compose.yml";
         public readonly string EnvFileName = "env";
 
-        public readonly string ComposeFileContent =
+        public readonly string ServiceName = "web";
+
+        public string ComposeFileContent =>
             """
-            version: '3.8'
-            services:
-              web:
-                image: nginx:latest
-                ports:
-                  - "80:80"
-                environment:
-                  - NGINX_HOST=${NGINX_HOST}
-                  - NGINX_PORT=${NGINX_PORT}
-            """;
+                version: '3.8'
+                services:
+                  SERVICE_NAME:
+                    image: nginx:latest
+                    environment:
+                      - NGINX_HOST=${NGINX_HOST}
+                      - NGINX_PORT=${NGINX_PORT}
+                """
+                .Replace("SERVICE_NAME", ServiceName);
 
         public readonly string EnvFileContent =
             """
@@ -47,6 +49,10 @@ public class TestBase
             // Ensure cheap server type for testing
             Container.Server.Datacenter = PortDatacenter.Nbg1;
             Container.Server.Type = PortServerType.Cx22;
+
+            // Ensure correct server name
+            Container.Server.Name =
+                $"{Container.Server.Type.Name}-{Container.Server.Datacenter.Name}";
         }
     }
 
@@ -55,6 +61,7 @@ public class TestBase
     {
         _fakers = new Fakers();
         _testConfig = new TestConfig(_fakers);
+        _otherTestConfig = new TestConfig(_fakers);
 
         // Setup Hetzner API token
         await Log("Setting up Hetzner API token...");
@@ -72,7 +79,7 @@ public class TestBase
         if (string.IsNullOrWhiteSpace(_token))
         {
             throw new ArgumentException(
-                "HETZNER_TOKEN not set write your API token in the file called HETZNER_TOKEN."
+                "HETZNER_TOKEN not set. Write your API token in the file called HETZNER_TOKEN."
             );
         }
 
