@@ -15,7 +15,7 @@ internal partial class ServerRepository
             PortDatacenter datacenter,
             bool uniqueServer = false)
             => uniqueServer
-                ? $"{containerName}-{serverType.Name}-{datacenter.Name}"
-                : $"{serverType.Name}-{datacenter.Name}";
+                ? $"{containerName}-{serverType.ToString()}-{datacenter.ToString()}"
+                : $"{serverType.ToString()}-{datacenter.ToString()}";
     }
 }

@@ -1,10 +1,10 @@
 namespace ItsNameless.HPort.IntegrationTest;
 
-[TestFixture]
+[TestFixture, Explicit, ]
 [TestOf(typeof(HPort))]
 public class SingleContainerTest : TestBase
 {
-    [Test, Order(1), Explicit,]
+    [Test, Order(1),]
     public async Task
         AddContainer_NoServerExists_CreatesServer_AndAddsContainer()
     {
@@ -60,7 +60,7 @@ public class SingleContainerTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(2), Explicit,]
+    [Test, Order(2),]
     public async Task CheckContainer_RunsCommandInContainer_AndReturnsResult()
     {
         // Act
@@ -83,7 +83,7 @@ public class SingleContainerTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(98), Explicit,]
+    [Test, Order(98),]
     public async Task DeleteContainer_DeletesContainer_AndServer()
     {
         // Act
@@ -114,7 +114,7 @@ public class SingleContainerTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(99), Explicit,]
+    [Test, Order(99),]
     public async Task CheckContainer_ServerDeleted_ServerDoesNotExistAnymore()
     {
         // Act

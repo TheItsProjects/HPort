@@ -4,7 +4,6 @@ using ItsNameless.HPort.Test.Utils;
 
 namespace ItsNameless.HPort.IntegrationTest;
 
-[TestFixture]
 [TestOf(typeof(HPort))]
 public class TestBase
 {
