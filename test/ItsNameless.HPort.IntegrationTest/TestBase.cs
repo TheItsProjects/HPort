@@ -46,7 +46,7 @@ public class TestBase
             Container = fakers.PortContainerFaker.Generate();
 
             // Ensure cheap server type for testing
-            Container.Server.Datacenter = PortDatacenter.Nbg1;
+            Container.Server.Datacenter = PortDatacenter.Nbg;
             Container.Server.Type = PortServerType.Cx23;
 
             // Ensure correct server name
