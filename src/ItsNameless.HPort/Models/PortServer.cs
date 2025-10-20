@@ -180,9 +180,9 @@ public enum PortServerType
 
 public enum PortDatacenter
 {
-    Nbg1 = 2,
-    Hel1 = 3,
-    Fsn1 = 4,
+    Nbg = 2,
+    Hel = 3,
+    Fsn = 4,
     Ash = 5,
     Hil = 6,
     Sin = 7,
