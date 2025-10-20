@@ -51,25 +51,29 @@ public record PortServer
 
 public enum PortServerType
 {
-    Cpx11 = 22,
-    Cpx21 = 23,
-    Cpx31 = 24,
-    Cpx41 = 25,
-    Cpx51 = 26,
+    // Shared Cost-Efficient CPU
+    Cx23 = 114,
+    Cx33 = 115,
+    Cx43 = 116,
+    Cx53 = 117,
     Cax11 = 45,
     Cax21 = 93,
     Cax31 = 94,
     Cax41 = 95,
+    // Shared Regular CPU
+    Cpx12 = 108,
+    Cpx22 = 109,
+    Cpx32 = 110,
+    Cpx42 = 111,
+    Cpx52 = 112,
+    Cpx62 = 113,
+    // Dedicated CPU
     Ccx13 = 96,
     Ccx23 = 97,
     Ccx33 = 98,
     Ccx43 = 99,
     Ccx53 = 100,
     Ccx63 = 101,
-    Cx22 = 104,
-    Cx32 = 105,
-    Cx42 = 106,
-    Cx52 = 107,
 }
 
 // /// <summary>

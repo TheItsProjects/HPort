@@ -47,7 +47,7 @@ public class TestBase
 
             // Ensure cheap server type for testing
             Container.Server.Datacenter = PortDatacenter.Nbg1;
-            Container.Server.Type = PortServerType.Cx22;
+            Container.Server.Type = PortServerType.Cx23;
 
             // Ensure correct server name
             Container.Server.Name =
