@@ -40,9 +40,18 @@ internal partial class ServerRepository : IServerRepository
     /// This should be called before any other operations.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    public async Task Setup(CancellationToken cancellationToken = default)
+    public async Task SetupAsync(CancellationToken cancellationToken = default)
     {
-        await LoadServerStates(cancellationToken);
+        await LoadServerStatesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Sets up the repository by loading the server states from the file.
+    /// This should be called before any other operations.
+    /// </summary>
+    public void Setup()
+    {
+        LoadServerStates();
     }
 
     /// <summary>
@@ -144,10 +153,10 @@ internal partial class ServerRepository : IServerRepository
         {
             server =
                 await _hetznerCloudClient.Server.Create(
-                    datacenter.Id,
+                    (long)datacenter,
                     DOCKER_IMAGE_ID,
                     serverName,
-                    serverType.Id,
+                    (long)serverType,
                     sshKeysIds: sshKeyId != null ? [sshKeyId.Value,] : [],
                     userData: cloudConfig
                 );
@@ -333,7 +342,7 @@ internal partial class ServerRepository : IServerRepository
     private async Task RefreshServerStates(
         CancellationToken cancellationToken = default)
     {
-        await LoadServerStates(cancellationToken);
+        await LoadServerStatesAsync(cancellationToken);
 
         var actualServers = await _hetznerCloudClient.Server.Get();
         var actualServerIds = actualServers.Select(s => s.Id).ToList();
@@ -367,7 +376,7 @@ internal partial class ServerRepository : IServerRepository
         );
     }
 
-    private async Task LoadServerStates(
+    private async Task LoadServerStatesAsync(
         CancellationToken cancellationToken = default)
     {
         if (!File.Exists(_filePath))
@@ -381,6 +390,20 @@ internal partial class ServerRepository : IServerRepository
                 _filePath,
                 cancellationToken
             );
+        _serverStates =
+            JsonSerializer.Deserialize<List<ServerState>>(json) ??
+            [];
+    }
+
+    private void LoadServerStates()
+    {
+        if (!File.Exists(_filePath))
+        {
+            _serverStates = [];
+            return;
+        }
+
+        var json = _fileSystem.File.ReadAllText(_filePath);
         _serverStates =
             JsonSerializer.Deserialize<List<ServerState>>(json) ??
             [];

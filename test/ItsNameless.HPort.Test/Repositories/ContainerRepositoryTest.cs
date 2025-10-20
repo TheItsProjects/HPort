@@ -38,8 +38,8 @@ public class ContainerRepositoryTest
         var expectedComposeContent = _fakers.Faker.Lorem.Paragraph();
         var expectedEnvContent = _fakers.Faker.Lorem.Paragraph();
         string actualServerName = null!;
-        PortServerType actualServerType = null!;
-        PortDatacenter actualDatacenter = null!;
+        PortServerType actualServerType = default;
+        PortDatacenter actualDatacenter = default;
         long? actualSshKeyId = null;
         string actualContainerName = null!;
         string actualComposeContent = null!;

@@ -51,8 +51,8 @@ public class ContainerServiceTest
         _containerRepository
             .CreateContainerOnNewServer(
                 null!,
-                null!,
-                null!,
+                default,
+                default,
                 null,
                 null!,
                 null!,
@@ -76,8 +76,8 @@ public class ContainerServiceTest
         await _containerRepository.ReceivedWithAnyArgs(1)
             .CreateContainerOnNewServer(
                 null!,
-                null!,
-                null!,
+                default,
+                default,
                 null,
                 null!,
                 null!,
@@ -173,8 +173,8 @@ public class ContainerServiceTest
         _containerRepository
             .CreateContainerOnNewServer(
                 null!,
-                null!,
-                null!,
+                default,
+                default,
                 null,
                 null!,
                 null!,

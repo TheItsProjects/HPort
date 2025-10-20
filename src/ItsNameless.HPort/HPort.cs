@@ -4,16 +4,11 @@ using ItsNameless.HPort.Services;
 
 namespace ItsNameless.HPort;
 
-/// <summary>
-/// Class used for interacting with containers on Hetzner servers.
-/// </summary>
-[GenerateAutoInterface]
+/// <inheritdoc />
 public class HPort : IHPort
 {
-    /// <summary>
-    /// Service for interacting with containers on Hetzner servers.
-    /// </summary>
-    public readonly IContainerService Container;
+    /// <inheritdoc />
+    public IContainerService Container { get; init; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HPort"/> class.
@@ -31,9 +26,34 @@ public class HPort : IHPort
     /// <param name="serverStatesFilePath">
     ///     The path to a JSON file storing information about managed services, e.g. their passwords.
     /// </param>
-    /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A new instance of <see cref="HPort"/>.</returns>
-    public static async Task<HPort> WithDefaults(
+    public static HPort WithDefaults(
+        string hetznerToken,
+        string serverStatesFilePath)
+    {
+        var fileSystem = new FileSystem();
+        var hetznerCloudClient = new HetznerCloudClient(hetznerToken);
+        var serverRepository =
+            new ServerRepository(
+                serverStatesFilePath,
+                hetznerCloudClient,
+                fileSystem
+            );
+        var containerRepository = new ContainerRepository(serverRepository);
+        var containerService =
+            new ContainerService(
+                serverRepository,
+                containerRepository,
+                fileSystem
+            );
+
+        serverRepository.Setup();
+
+        return new HPort(containerService);
+    }
+
+    /// <inheritdoc cref="WithDefaults"/>
+    public static async Task<HPort> WithDefaultsAsync(
         string hetznerToken,
         string serverStatesFilePath,
         CancellationToken cancellationToken = default)
@@ -56,7 +76,7 @@ public class HPort : IHPort
                 fileSystem
             );
 
-        await serverRepository.Setup(cancellationToken);
+        await serverRepository.SetupAsync(cancellationToken);
 
         return new HPort(containerService);
     }

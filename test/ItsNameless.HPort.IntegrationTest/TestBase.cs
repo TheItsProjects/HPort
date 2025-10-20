@@ -52,7 +52,7 @@ public class TestBase
 
             // Ensure correct server name
             Container.Server.Name =
-                $"{Container.Server.Type.Name}-{Container.Server.Datacenter.Name}";
+                 $"{Container.Server.Type.ToString()}-{Container.Server.Datacenter.ToString()}";
         }
     }
 
@@ -108,7 +108,7 @@ public class TestBase
         await Log("-> No working files exist.");
 
         // Initialize HPort
-        _sut = await HPort.WithDefaults(_token, "serverStates.json");
+        _sut = await HPort.WithDefaultsAsync(_token, "serverStates.json");
     }
 
     [OneTimeTearDown]

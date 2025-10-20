@@ -2,7 +2,6 @@
 using HetznerCloudApi.Object.Datacenter;
 using HetznerCloudApi.Object.Server;
 using HetznerCloudApi.Object.ServerType;
-using ItsNameless.HPort.Bases;
 using ItsNameless.HPort.Models;
 
 namespace ItsNameless.HPort.Test.Utils;
@@ -37,11 +36,11 @@ public class Fakers
             .RuleFor(s => s.UserPassword, f => f.Random.AlphaNumeric(30))
             .RuleFor(
                 s => s.Datacenter,
-                f => f.PickRandom(ComplexEnum.GetValues<PortDatacenter>())
+                f => f.PickRandom(Enum.GetValues<PortDatacenter>())
             )
             .RuleFor(
                 s => s.Type,
-                f => f.PickRandom(ComplexEnum.GetValues<PortServerType>())
+                f => f.PickRandom(Enum.GetValues<PortServerType>())
             );
 
         PortContainerFaker = new Faker<PortContainer>();
@@ -64,7 +63,7 @@ public class Fakers
         {
             Id =
                 f.PickRandom(
-                    ComplexEnum.GetValues<PortServerType>().Select(t => t.Id)
+                    Enum.GetValues<PortServerType>().Select(t => (long)t)
                 )
         };
 
@@ -73,7 +72,7 @@ public class Fakers
         {
             Id =
                 f.PickRandom(
-                    ComplexEnum.GetValues<PortDatacenter>().Select(t => t.Id)
+                    Enum.GetValues<PortDatacenter>().Select(t => (long)t)
                 )
         };
 }

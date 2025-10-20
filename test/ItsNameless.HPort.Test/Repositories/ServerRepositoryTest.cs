@@ -23,7 +23,7 @@ public class ServerRepositoryTest
         var serverType = _fakers.PortServerFaker.Generate().Type;
         var datacenter = _fakers.PortServerFaker.Generate().Datacenter;
 
-        var expectedName = $"{serverType.Name}-{datacenter.Name}";
+        var expectedName = $"{serverType.ToString()}-{datacenter.ToString()}";
 
 
         // Act
@@ -48,7 +48,7 @@ public class ServerRepositoryTest
         var datacenter = _fakers.PortServerFaker.Generate().Datacenter;
 
         var expectedName =
-            $"{containerName}-{serverType.Name}-{datacenter.Name}";
+            $"{containerName}-{serverType.ToString()}-{datacenter.ToString()}";
 
 
         // Act
