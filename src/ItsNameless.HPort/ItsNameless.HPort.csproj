@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="HetznerCloud.API" Version="1.1.9" />
+      <PackageReference Include="InterfaceGenerator" Version="1.0.14">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="SSH.NET" Version="2025.0.0" />
+      <PackageReference Include="System.IO.Abstractions" Version="22.0.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="ItsNameless.HPort.Test" />
+        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Repositories\ServerRepository.Name.cs">
+        <DependentUpon>ServerRepository.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Repositories\ServerRepository.Commands.cs">
+        <DependentUpon>ServerRepository.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Repositories\ServerRepository.Helpers.cs">
+        <DependentUpon>ServerRepository.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>
