@@ -22,6 +22,6 @@ public class HPortWrapper : IHPort
     public IContainerService Container
     {
         get => Current.Container;
-        init => throw new NotImplementedException();
+        init => throw new NotSupportedException();
     }
 }
