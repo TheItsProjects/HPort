@@ -8,23 +8,39 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-      <PackageReference Include="HetznerCloud.API" Version="1.1.9" />
-      <PackageReference Include="InterfaceGenerator" Version="1.0.14">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="SSH.NET" Version="2025.0.0" />
-      <PackageReference Include="System.CommandLine" Version="2.0.0-beta7.25380.108" />
-      <PackageReference Include="System.IO.Abstractions" Version="22.0.15" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
+        <PackageReference Include="DotMake.CommandLine" Version="2.8.2"/>
+        <PackageReference Include="HetznerCloud.API" Version="1.1.9"/>
+        <PackageReference Include="InterfaceGenerator" Version="1.0.14">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10"/>
+        <PackageReference Include="SSH.NET" Version="2025.0.0"/>
+        <PackageReference Include="System.IO.Abstractions" Version="22.0.15"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test" />
+        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ItsNameless.HPort\ItsNameless.HPort.csproj" />
+        <ProjectReference Include="..\ItsNameless.HPort\ItsNameless.HPort.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Commands\ContainerCreateCommand.cs">
+            <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Commands\ContainerDeleteCommand.cs">
+          <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Commands\ContainerExecuteCommand.cs">
+          <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Commands\ContainerListCommand.cs">
+          <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

@@ -11,9 +11,10 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 
-# Testfiles
+# Project Files
 docker-compose.yml
 compose.yml
 .env
 env
 serverStates.json
+HETZNER_TOKEN
