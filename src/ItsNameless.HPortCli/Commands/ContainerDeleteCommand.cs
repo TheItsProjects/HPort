@@ -36,7 +36,7 @@ public class ContainerDeleteCommand(IHPort hPort)
 
     public async Task RunAsync(CliContext context)
     {
-        context.Output.WriteLine($"Deleting container '{ContainerName}' from server '{ServerName}'...");
+        await context.Output.WriteLineAsync($"Deleting container '{ContainerName}' from server '{ServerName}'...");
 
         try
         {
@@ -46,16 +46,16 @@ public class ContainerDeleteCommand(IHPort hPort)
                 DeleteServerIfEmpty
             );
 
-            context.Output.WriteLine($"Successfully deleted container '{container.Name}'.");
+            await context.Output.WriteLineAsync($"Successfully deleted container '{container.Name}'.");
             
             if (DeleteServerIfEmpty)
             {
-                context.Output.WriteLine("Server was also deleted if it was empty.");
+                await context.Output.WriteLineAsync("Server was also deleted if it was empty.");
             }
         }
         catch (Exception ex)
         {
-            context.Error.WriteLine($"Error: {ex.Message}");
+            await context.Error.WriteLineAsync($"Error: {ex.Message}");
         }
     }
 }

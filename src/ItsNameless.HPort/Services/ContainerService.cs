@@ -35,6 +35,7 @@ public class ContainerService : IContainerService
     /// <param name="envFilePath">The .env file.</param>
     /// <param name="sshKeyId">The root SSH Key.</param>
     /// <param name="uniqueServer">Whether the service should receive a unique server.</param>
+    /// <param name="networkId">The internal network ID.</param>
     /// <returns>The created <see cref="PortContainer"/>.</returns>
     /// <exception cref="InvalidOperationException">Thrown when there was an error creating the server.</exception>
     public async Task<PortContainer> CreateContainer(
@@ -44,7 +45,8 @@ public class ContainerService : IContainerService
         string composeFilePath,
         string envFilePath,
         long? sshKeyId = null,
-        bool uniqueServer = false
+        bool uniqueServer = false,
+        long? networkId = null
     )
     {
         var composeContent =
@@ -87,7 +89,8 @@ public class ContainerService : IContainerService
             sshKeyId,
             serverName,
             composeContent,
-            envContent
+            envContent,
+            networkId
         );
     }
 

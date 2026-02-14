@@ -29,16 +29,16 @@ public class ContainerListCommand(IHPort hPort)
 
             if (containers.Count == 0)
             {
-                context.Output.WriteLine("No containers found.");
+                await context.Output.WriteLineAsync("No containers found.");
                 return;
             }
 
-            context.Output.WriteLine($"{"Container Name",-20} | {"Server Name",-20}");
-            context.Output.WriteLine(new string('-', 43));
+            await context.Output.WriteLineAsync($"{"Container Name",-20} | {"Server Name",-20}");
+            await context.Output.WriteLineAsync(new string('-', 43));
 
             foreach (var container in containers)
             {
-                context.Output.WriteLine($"{container.Name,-20} | {container.Server.Name,-20}");
+                await context.Output.WriteLineAsync($"{container.Name,-20} | {container.Server.Name,-20}");
             }
         }
         catch (Exception ex)

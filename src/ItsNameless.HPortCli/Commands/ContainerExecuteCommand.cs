@@ -52,11 +52,11 @@ public class ContainerExecuteCommand(IHPort hPort)
                 Command
             );
 
-            context.Output.WriteLine(result);
+            await context.Output.WriteLineAsync(result);
         }
         catch (Exception ex)
         {
-            context.Error.WriteLine($"Error: {ex.Message}");
+            await context.Error.WriteLineAsync($"Error: {ex.Message}");
         }
     }
 }

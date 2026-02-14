@@ -31,6 +31,7 @@ internal class ContainerRepository : IContainerRepository
     /// <param name="serverName">The name of the new server.</param>
     /// <param name="composeContent">The content of the docker compose file.</param>
     /// <param name="envContent">The content of the .env file.</param>
+    /// <param name="networkId">The internal network ID.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created <see cref="PortContainer"/>.</returns>
     /// <exception cref="ArgumentException">Thrown when the server already exists.</exception>
@@ -43,6 +44,7 @@ internal class ContainerRepository : IContainerRepository
         string serverName,
         string composeContent,
         string envContent,
+        long? networkId = null,
         CancellationToken cancellationToken = default
     )
     {
@@ -55,6 +57,7 @@ internal class ContainerRepository : IContainerRepository
                 containerName,
                 composeContent,
                 envContent,
+                networkId,
                 cancellationToken
             );
 

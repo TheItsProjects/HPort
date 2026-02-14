@@ -115,6 +115,7 @@ internal partial class ServerRepository : IServerRepository
     /// <param name="initialContainerName">The name for the first container to add.</param>
     /// <param name="initialCompose">The compose for the first container to add.</param>
     /// <param name="initialEnv">The env for the first container to add.</param>
+    /// <param name="networkId">The ID of the network to attach the server to.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created Server.</returns>
     /// <exception cref="ArgumentException">Thrown when the server already exists.</exception>
@@ -127,6 +128,7 @@ internal partial class ServerRepository : IServerRepository
         string initialContainerName,
         string initialCompose,
         string initialEnv,
+        long? networkId = null,
         CancellationToken cancellationToken = default)
     {
         await RefreshServerStates(cancellationToken);
@@ -158,7 +160,9 @@ internal partial class ServerRepository : IServerRepository
                     serverName,
                     (long)serverType,
                     sshKeysIds: sshKeyId != null ? [sshKeyId.Value,] : [],
-                    userData: cloudConfig
+                    userData: cloudConfig,
+                    privateNetoworksIds: networkId.HasValue ? [networkId.Value,] : [],
+                    ipv4: !networkId.HasValue
                 );
         }
         catch (Exception e) // TODO what exception?
@@ -257,12 +261,16 @@ internal partial class ServerRepository : IServerRepository
         }
 
         var server = await _hetznerCloudClient.Server.Get(serverState.Id);
-        var serverIp = server.PublicNet.Ipv4;
+        string? serverIp = server.PublicNet.Ipv4?.Ip;
+        if (serverIp == null && server.PrivateNet != null && server.PrivateNet.Any())
+        {
+            serverIp = server.PrivateNet.First().Ip;
+        }
 
         if (serverIp == null)
         {
             throw new InvalidOperationException(
-                $"Server {serverName} does not have a public IP address."
+                $"Server {serverName} does not have a public or private IP address."
             );
         }
 
@@ -304,7 +312,7 @@ internal partial class ServerRepository : IServerRepository
                 await ExecuteCommandsOnServer(
                         serverName,
                         [
-                            $"docker compose -f /home/{PortServer.User}/{containerName}/docker-compose.yml ps --format '{{{{.Names}}}}'",
+                            Commands.CheckContainerIsRunning(containerName),
                         ],
                         cancellationToken
                     )
@@ -379,7 +387,7 @@ internal partial class ServerRepository : IServerRepository
     private async Task LoadServerStatesAsync(
         CancellationToken cancellationToken = default)
     {
-        if (!File.Exists(_filePath))
+        if (!_fileSystem.File.Exists(_filePath))
         {
             _serverStates = [];
             return;
@@ -397,7 +405,7 @@ internal partial class ServerRepository : IServerRepository
 
     private void LoadServerStates()
     {
-        if (!File.Exists(_filePath))
+        if (!_fileSystem.File.Exists(_filePath))
         {
             _serverStates = [];
             return;
@@ -410,14 +418,14 @@ internal partial class ServerRepository : IServerRepository
     }
 
     private static async IAsyncEnumerable<string> ExecuteCommands(
-        Ipv4 serverIp,
+        string serverIp,
         string userPassword,
         IEnumerable<string> commands,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var sshClient =
             new SshClient(
-                serverIp.Ip,
+                serverIp,
                 PortServer.User,
                 userPassword
             );
@@ -480,15 +488,23 @@ internal partial class ServerRepository : IServerRepository
         // Wait 10s for the server to be fully initialized
         await Task.Delay(10_000, cancellationToken);
 
+        string? serverIp = server.PublicNet.Ipv4?.Ip;
+        if (serverIp == null && server.PrivateNet != null && server.PrivateNet.Any())
+        {
+            serverIp = server.PrivateNet.First().Ip;
+        }
+
+        if (serverIp == null)
+        {
+            return "Server does not have a public or private IP address.";
+        }
+
         // Check if there are no errors in the cloud-init logs
         var errorLogs =
             await ExecuteCommands(
-                    server.PublicNet.Ipv4,
+                    serverIp,
                     userPassword,
-                    [
-                        "sudo awk '/^Error/ {print; c=5; next} c {print; c--}' /var/log/cloud-init.log",
-                        "sudo awk '/^Error/ {print; c=5; next} c {print; c--}' /var/log/cloud-init-output.log",
-                    ],
+                    Commands.CheckCloudInitLogs(),
                     cancellationToken
                 )
                 .ToListAsync(cancellationToken);

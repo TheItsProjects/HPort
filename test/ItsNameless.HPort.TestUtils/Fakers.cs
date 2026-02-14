@@ -41,6 +41,15 @@ public class Fakers
             .RuleFor(
                 s => s.Type,
                 f => f.PickRandom(Enum.GetValues<PortServerType>())
+            )
+            .RuleFor(
+                s => s.Ips,
+                f => [new PortServerIp
+                    {
+                        Address = f.Internet.Ip(),
+                        IsPublic = true
+                    }
+                ]
             );
 
         PortContainerFaker = new Faker<PortContainer>();

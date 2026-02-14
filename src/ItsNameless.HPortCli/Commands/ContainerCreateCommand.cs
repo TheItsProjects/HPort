@@ -62,32 +62,42 @@ public class ContainerCreateCommand(IHPort hPort)
         Name = "is-unique",
         Alias = "u"
     )]
-    public bool UniqueServer { get; set; } = false;
+    public bool UniqueServer { get; set; }
+
+    [CliOption(
+        Description =
+            "Internal Network ID to attach the container to. The host server needs to be part of the network, because no public IP will be assigned to the container if this option is used.",
+        Name = "internal-network",
+        Alias = "in"
+    )]
+    public long? NetworkId { get; set; }
 
     public async Task RunAsync(CliContext context)
     {
-        context.Output.WriteLine($"Creating container: {ContainerName}...");
+        await context.Output.WriteLineAsync($"Creating container: {ContainerName}...");
 
         try
         {
-            var container = await _hPort.Container.CreateContainer(
-                ContainerName,
-                ServerType,
-                Datacenter,
-                ComposeFilePath,
-                EnvFilePath,
-                SshKeyId,
-                UniqueServer
-            );
+            var container =
+                await _hPort.Container.CreateContainer(
+                    ContainerName,
+                    ServerType,
+                    Datacenter,
+                    ComposeFilePath,
+                    EnvFilePath,
+                    SshKeyId,
+                    UniqueServer,
+                    NetworkId
+                );
 
-            context.Output.WriteLine(
+            await context.Output.WriteLineAsync(
                 $"Successfully created container '{container.Name}' " +
                 $"on server '{container.Server.Name}'."
             );
         }
         catch (Exception ex)
         {
-            context.Error.WriteLine($"Error: {ex.Message}");
+            await context.Error.WriteLineAsync($"Error: {ex.Message}");
         }
     }
 }

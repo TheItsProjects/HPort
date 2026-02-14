@@ -16,17 +16,28 @@ internal partial class ServerRepository
             string containerName,
             string composeContent)
             =>
-                $"echo \"{composeContent}\" > /home/{PortServer.User}/{containerName}/docker-compose.yml";
+                $"echo \"{composeContent.Replace("\"", "\\\"").Replace("$", "\\$")}\" > /home/{PortServer.User}/{containerName}/docker-compose.yml";
 
         internal static string CreateEnvFile(
             string containerName,
             string envContent)
             =>
-                $"echo \"{envContent}\" > /home/{PortServer.User}/{containerName}/.env";
+                $"echo \"{envContent.Replace("\"", "\\\"").Replace("$", "\\$")}\" > /home/{PortServer.User}/{containerName}/.env";
 
         internal static string StartContainer(string containerName)
             =>
                 $"docker compose -f /home/{PortServer.User}/{containerName}/docker-compose.yml up -d";
+
+        internal static string CheckContainerIsRunning(string containerName)
+            =>
+                $"docker compose -f /home/{PortServer.User}/{containerName}/docker-compose.yml ps --format '{{{{.Names}}}}'";
+
+        internal static IEnumerable<string> CheckCloudInitLogs()
+            =>
+            [
+                "sudo awk '/^Error/ {print; c=5; next} c {print; c--}' /var/log/cloud-init.log",
+                "sudo awk '/^Error/ {print; c=5; next} c {print; c--}' /var/log/cloud-init-output.log",
+            ];
 
         internal static string CreateInitializedFile(string containerName)
             => $"touch /home/{PortServer.User}/{containerName}/INITIALIZED";

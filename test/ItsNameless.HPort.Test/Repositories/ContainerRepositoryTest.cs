@@ -53,6 +53,7 @@ public class ContainerRepositoryTest
                 Arg.Do<string>(s => actualContainerName = s),
                 Arg.Do<string>(s => actualComposeContent = s),
                 Arg.Do<string>(s => actualEnvContent = s),
+                Arg.Any<long?>(),
                 Arg.Any<CancellationToken>()
             )
             .ReturnsAsyncForAnyArgs(expectedServer);
@@ -79,6 +80,7 @@ public class ContainerRepositoryTest
                 Arg.Any<string>(),
                 Arg.Any<string>(),
                 Arg.Any<string>(),
+                Arg.Any<long?>(),
                 Arg.Any<CancellationToken>()
             );
 
