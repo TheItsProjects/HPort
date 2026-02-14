@@ -34,7 +34,7 @@ public class ContainerDeleteCommand(IHPort hPort)
     )]
     public bool DeleteServerIfEmpty { get; set; } = true;
 
-    public async Task Run(CliContext context)
+    public async Task RunAsync(CliContext context)
     {
         context.Output.WriteLine($"Deleting container '{ContainerName}' from server '{ServerName}'...");
 

@@ -41,7 +41,7 @@ public class ContainerExecuteCommand(IHPort hPort)
     )]
     public required string Command { get; set; }
 
-    public async Task Run(CliContext context)
+    public async Task RunAsync(CliContext context)
     {
         try
         {

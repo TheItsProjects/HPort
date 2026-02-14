@@ -9,14 +9,9 @@ namespace ItsNameless.HPortCli.Commands;
     Alias = "l",
     Parent = typeof(ContainerCommand)
 )]
-public class ContainerListCommand
+public class ContainerListCommand(IHPort hPort)
 {
-    private readonly IHPort _hPort;
-
-    public ContainerListCommand(IHPort hPort)
-    {
-        _hPort = hPort;
-    }
+    private readonly IHPort _hPort = hPort;
 
     [CliOption(
         Description = "Name of the server to search on",
@@ -26,7 +21,7 @@ public class ContainerListCommand
     )]
     public string? ServerName { get; set; }
 
-    public async Task Run(CliContext context)
+    public async Task RunAsync(CliContext context)
     {
         try
         {
@@ -48,7 +43,7 @@ public class ContainerListCommand
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error: {ex.Message}");
+            await context.Error.WriteLineAsync($"Error: {ex.Message}");
         }
     }
 }

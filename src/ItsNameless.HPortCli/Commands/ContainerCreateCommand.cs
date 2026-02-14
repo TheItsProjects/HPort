@@ -64,7 +64,7 @@ public class ContainerCreateCommand(IHPort hPort)
     )]
     public bool UniqueServer { get; set; } = false;
 
-    public async Task Run(CliContext context)
+    public async Task RunAsync(CliContext context)
     {
         context.Output.WriteLine($"Creating container: {ContainerName}...");
 
