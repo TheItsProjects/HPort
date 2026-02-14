@@ -10,7 +10,7 @@ HPort is a .NET-based solution designed to streamline the management of Docker c
 - **Containerization:** Docker & Docker Compose
 - **CLI Framework:** `DotMake.CommandLine`
 - **Security:** `BCrypt.Net-Next` for password hashing
-- **Testing:** xUnit, `NSubstitute`, and `System.IO.Abstractions` for file system mocking.
+- **Testing:** NUnit, `NSubstitute`, and `System.IO.Abstractions` for file system mocking.
 
 ## Architecture & Structure
 The project follows a clean architecture pattern with a clear separation between the core library, CLI, and tests.

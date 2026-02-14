@@ -56,7 +56,7 @@ public class ContainerExecuteCommand(IHPort hPort)
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error: {ex.Message}");
+            context.Error.WriteLine($"Error: {ex.Message}");
         }
     }
 }

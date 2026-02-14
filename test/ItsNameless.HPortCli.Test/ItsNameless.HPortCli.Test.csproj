@@ -25,4 +25,10 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ItsNameless.HPort.TestUtils\ItsNameless.HPort.TestUtils.csproj" />
+      <ProjectReference Include="..\..\src\ItsNameless.HPort\ItsNameless.HPort.csproj" />
+      <ProjectReference Include="..\..\src\ItsNameless.HPortCli\ItsNameless.HPortCli.csproj" />
+    </ItemGroup>
+
 </Project>
