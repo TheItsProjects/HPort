@@ -1,7 +1,8 @@
 {
   "context": {
     "fileName": [
-      "AGENTS.md"
+      "AGENTS.md",
+      "GEMINI.md"
     ],
     "fileFiltering": {
       "respectGitIgnore": true
