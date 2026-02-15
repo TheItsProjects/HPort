@@ -24,7 +24,9 @@
       "run_shell_command(git status)",
       "run_shell_command(git diff)",
       "run_shell_command(git branch)",
-      "run_shell_command(git log)"
+      "run_shell_command(git log)",
+      "run_shell_command(dotnet build)",
+      "run_shell_command(dotnet test)"
     ]
   },
   "security": {

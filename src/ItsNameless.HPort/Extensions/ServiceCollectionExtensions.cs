@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
         var hport =
             await HPort.WithDefaultsAsync(hetznerToken, serverStatesFilePath);
 
-        services.AddSingleton<IHPort, HPort>(p => hport);
+        services.AddSingleton<IHPort>(p => hport);
 
         return services;
     }

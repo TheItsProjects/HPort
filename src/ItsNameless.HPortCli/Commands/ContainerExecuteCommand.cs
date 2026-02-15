@@ -41,7 +41,7 @@ public class ContainerExecuteCommand(IHPort hPort)
     )]
     public required string Command { get; set; }
 
-    public async Task RunAsync(CliContext context)
+    public async Task<int> RunAsync(CliContext context)
     {
         try
         {
@@ -57,6 +57,9 @@ public class ContainerExecuteCommand(IHPort hPort)
         catch (Exception ex)
         {
             await context.Error.WriteLineAsync($"Error: {ex.Message}");
+            return 1;
         }
+
+        return 0;
     }
 }

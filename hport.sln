@@ -16,6 +16,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItsNameless.HPort.TestUtils
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItsNameless.HPort.IntegrationTest", "test\ItsNameless.HPort.IntegrationTest\ItsNameless.HPort.IntegrationTest.csproj", "{6C0A61EA-7E44-4916-A1D8-7FDDD42B8F9D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{CB9E34C9-C2CC-4D43-B514-A631A3C2B602}"
+	ProjectSection(SolutionItems) = preProject
+		AGENTS.md = AGENTS.md
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{F299C33B-76FC-4DBC-BF68-11B70F63B21B}"
+	ProjectSection(SolutionItems) = preProject
+		docs\CliReference.md = docs\CliReference.md
+		docs\Configuration.md = docs\Configuration.md
+		docs\DeveloperGuide.md = docs\DeveloperGuide.md
+		docs\Installation.md = docs\Installation.md
+		docs\LibraryUsage.md = docs\LibraryUsage.md
+		docs\Troubleshooting.md = docs\Troubleshooting.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +71,6 @@ Global
 		{708EF483-CDCE-41B7-BBF6-61E3B6A78FF4} = {3F2C5707-7EF6-4732-9A7E-5FB6C90C5BED}
 		{B11484E0-57D7-45BA-9263-9115ECCD835D} = {3F2C5707-7EF6-4732-9A7E-5FB6C90C5BED}
 		{6C0A61EA-7E44-4916-A1D8-7FDDD42B8F9D} = {3F2C5707-7EF6-4732-9A7E-5FB6C90C5BED}
+		{F299C33B-76FC-4DBC-BF68-11B70F63B21B} = {CB9E34C9-C2CC-4D43-B514-A631A3C2B602}
 	EndGlobalSection
 EndGlobal

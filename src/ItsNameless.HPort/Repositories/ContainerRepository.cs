@@ -1,3 +1,4 @@
+using ItsNameless.HPort.Exceptions;
 using ItsNameless.HPort.Extensions;
 using ItsNameless.HPort.Models;
 
@@ -22,7 +23,7 @@ internal class ContainerRepository : IContainerRepository
 
 
     /// <summary>
-    /// Creates a new server and ads the container to it.
+    /// Creates a new server and adds the container to it.
     /// </summary>
     /// <param name="containerName">The name of the container to add.</param>
     /// <param name="serverType">The server type.</param>
@@ -120,14 +121,14 @@ internal class ContainerRepository : IContainerRepository
 
             if (containerIsRunning is false)
             {
-                throw new InvalidOperationException(
+                throw new ContainerOperationException(
                     $"The container {containerName} is not running on server {existingServer.Name}."
                 );
             }
         }
-        catch (InvalidOperationException e)
+        catch (Exception e) when (e is InvalidOperationException or HPortException)
         {
-            throw new InvalidOperationException(
+            throw new ContainerOperationException(
                 $"Failed to create new container on server {existingServer.Name}.",
                 e
             );
@@ -180,9 +181,9 @@ internal class ContainerRepository : IContainerRepository
                     )
                     .SingleAsync(cancellationToken);
         }
-        catch (InvalidOperationException e)
+        catch (Exception e) when (e is InvalidOperationException or HPortException)
         {
-            throw new InvalidOperationException(
+            throw new ContainerOperationException(
                 $"There was an error when trying to execute a command on the server: {e.Message}.",
                 e
             );
@@ -190,7 +191,7 @@ internal class ContainerRepository : IContainerRepository
 
         if (string.IsNullOrWhiteSpace(result))
         {
-            throw new InvalidOperationException(
+            throw new ContainerOperationException(
                 "The command did not return any result."
             );
         }
@@ -201,7 +202,7 @@ internal class ContainerRepository : IContainerRepository
         }
         catch (Exception e)
         {
-            throw new InvalidOperationException(
+            throw new ContainerOperationException(
                 "There was an error parsing the result of the command.",
                 e
             );
@@ -240,7 +241,7 @@ internal class ContainerRepository : IContainerRepository
         var server = await _serverRepository.GetServer(serverName);
         if (server is null)
         {
-            throw new InvalidOperationException(
+            throw new ServerNotFoundException(
                 $"Server {serverName} does not exist."
             );
         }
@@ -284,7 +285,7 @@ internal class ContainerRepository : IContainerRepository
 
         if (server is null)
         {
-            throw new InvalidOperationException(
+            throw new ServerNotFoundException(
                 $"Server {serverName} does not exist."
             );
         }
@@ -303,9 +304,13 @@ internal class ContainerRepository : IContainerRepository
                 )
                 .ToListAsync();
         }
-        catch (InvalidOperationException e)
+        catch (ServerNotFoundException)
         {
-            throw new InvalidOperationException(
+            throw;
+        }
+        catch (Exception e) when (e is InvalidOperationException or HPortException)
+        {
+            throw new ContainerOperationException(
                 $"There was an error while deleting the container: {e.Message}",
                 e
             );

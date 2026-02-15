@@ -1,4 +1,5 @@
 using System.IO.Abstractions.TestingHelpers;
+using ItsNameless.HPort.Exceptions;
 using ItsNameless.HPort.Repositories;
 using ItsNameless.HPort.Services;
 using ItsNameless.HPort.Test.Utils;
@@ -142,7 +143,7 @@ public class ContainerServiceTest
             .ReturnsAsyncForAnyArgs(expectedContainer.Server);
 
         // Act & Assert
-        Assert.ThrowsAsync<InvalidOperationException>(
+        Assert.ThrowsAsync<ContainerOperationException>(
             () =>
                 _sut.CreateContainer(
                     expectedContainer.Name,

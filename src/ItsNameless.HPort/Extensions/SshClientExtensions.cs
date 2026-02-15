@@ -1,3 +1,4 @@
+using ItsNameless.HPort.Exceptions;
 using Renci.SshNet;
 
 namespace ItsNameless.HPort.Extensions;
@@ -34,7 +35,7 @@ internal static class SshClientExtensions
                 retries--;
                 if (retries <= 0)
                 {
-                    throw new InvalidOperationException(
+                    throw new SshConnectionException(
                         "Failed to connect to SSH server after multiple attempts.",
                         ex
                     );

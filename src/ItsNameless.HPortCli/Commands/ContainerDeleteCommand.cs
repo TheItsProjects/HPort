@@ -34,7 +34,7 @@ public class ContainerDeleteCommand(IHPort hPort)
     )]
     public bool DeleteServerIfEmpty { get; set; } = true;
 
-    public async Task RunAsync(CliContext context)
+    public async Task<int> RunAsync(CliContext context)
     {
         await context.Output.WriteLineAsync($"Deleting container '{ContainerName}' from server '{ServerName}'...");
 
@@ -56,6 +56,9 @@ public class ContainerDeleteCommand(IHPort hPort)
         catch (Exception ex)
         {
             await context.Error.WriteLineAsync($"Error: {ex.Message}");
+            return 1;
         }
+
+        return 0;
     }
 }

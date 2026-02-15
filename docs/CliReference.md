@@ -6,10 +6,10 @@ The HPort CLI is the primary way to interact with the HPort system. It follows a
 
 ## Global Options
 
-| Option | Description |
-| :--- | :--- |
+| Option         | Description                                       |
+|:---------------|:--------------------------------------------------|
 | `--help`, `-?` | Shows help and usage information for the command. |
-| `--version` | Shows the current version of the tool. |
+| `--version`    | Shows the current version of the tool.            |
 
 ---
 
@@ -32,8 +32,8 @@ hport container create <name> --compose <path> --env <path> [options]
 **Options**:
 - `--compose <path>` **(Required)**: Path to the `docker-compose.yml` file.
 - `--env <path>` **(Required)**: Path to the `.env` file containing environment variables for the compose file.
-- `--type <type>`: Hetzner server type (e.g., `cx22`, `cpx11`, `cax11`). *Default: `cx22`*.
-- `--location <loc>`: Datacenter location (e.g., `nbg1` (Nuremberg), `hel1` (Helsinki), `fsn1` (Falkenstein)). *Default: `nbg1`*.
+- `--type <type>`: Hetzner server type (e.g., `Cx23`, `Cpx12`, `Cax11`). *Default: `Cx22`*.
+- `--location <loc>`: Datacenter location (e.g., `Nbg` (Nuremberg), `Hel` (Helsinki), `Fsn` (Falkenstein)). *Default: `Nbg`*.
 - `--unique`: If present, ensures the container is deployed to a brand new server, even if others are available.
 - `--ssh-key <id>`: The numeric ID of an SSH key in your Hetzner project. This key will be added to the server's root user.
 - `--network <id>`: The numeric ID of a Hetzner Cloud Private Network to attach the server to.
@@ -92,7 +92,7 @@ hport container execute <name> --server <server-name> --service <service> --comm
 hport container create my-website 
   --compose ./deploy/docker-compose.yml 
   --env ./deploy/.env 
-  --location hel1
+  --location hel
 ```
 
 **2. List all containers:**

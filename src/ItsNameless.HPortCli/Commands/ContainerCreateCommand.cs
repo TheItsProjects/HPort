@@ -72,7 +72,7 @@ public class ContainerCreateCommand(IHPort hPort)
     )]
     public long? NetworkId { get; set; }
 
-    public async Task RunAsync(CliContext context)
+    public async Task<int> RunAsync(CliContext context)
     {
         await context.Output.WriteLineAsync($"Creating container: {ContainerName}...");
 
@@ -98,6 +98,9 @@ public class ContainerCreateCommand(IHPort hPort)
         catch (Exception ex)
         {
             await context.Error.WriteLineAsync($"Error: {ex.Message}");
+            return 1;
         }
+
+        return 0;
     }
 }

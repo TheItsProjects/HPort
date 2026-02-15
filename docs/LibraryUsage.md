@@ -36,8 +36,8 @@ public class InfrastructureManager
             // 3. Create Container (and Server if needed)
             var container = await hport.Container.CreateContainer(
                 containerName: containerName,
-                serverType: PortServerType.cpx11, // 2 vCPU, 4GB RAM
-                datacenter: PortDatacenter.fsn1,  // Falkenstein
+                serverType: PortServerType.Cpx11, // 2 vCPU, 4GB RAM
+                datacenter: PortDatacenter.Fsn1,  // Falkenstein
                 composeFilePath: composeFile,
                 envFilePath: envFile
             );
@@ -58,7 +58,7 @@ public class InfrastructureManager
         
         foreach (var c in containers)
         {
-            Console.WriteLine($"- {c.Name} (Server: {c.Server.Name} / IP: {c.Server.Ip})");
+            Console.WriteLine($"- {c.Name} (Server: {c.Server.Name} / IP: {c.Server.Ips.FirstOrDefault()?.Address})");
         }
     }
 }

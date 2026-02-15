@@ -1,6 +1,7 @@
 using System.IO.Abstractions;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using ItsNameless.HPort.Exceptions;
 using ItsNameless.HPort.Extensions;
 using ItsNameless.HPort.Models;
 using Renci.SshNet;
@@ -111,7 +112,7 @@ internal partial class ServerRepository : IServerRepository
     /// <param name="serverName">The name to use for the server.</param>
     /// <param name="serverType">The Hetzner <see cref="PortServerType"/> to use.</param>
     /// <param name="datacenter">The Hetzner <see cref="PortDatacenter"/> to use.</param>
-    /// <param name="sshKeyId">An optional ID for an SSH Key to add as root login. Must exist on Hetzner.</param>
+    /// <param name="sshKeyId">An optional ID of an SSH key, existing on Hetzner, to attach to the server for SSH access.</param>
     /// <param name="initialContainerName">The name for the first container to add.</param>
     /// <param name="initialCompose">The compose for the first container to add.</param>
     /// <param name="initialEnv">The env for the first container to add.</param>
@@ -119,7 +120,7 @@ internal partial class ServerRepository : IServerRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created Server.</returns>
     /// <exception cref="ArgumentException">Thrown when the server already exists.</exception>
-    /// <exception cref="InvalidOperationException">Thrown when there was an error creating the server.</exception>
+    /// <exception cref="ServerCreationException">Thrown when there was an error creating the server.</exception>
     public async Task<PortServer> CreateServer(
         string serverName,
         PortServerType serverType,
@@ -165,10 +166,12 @@ internal partial class ServerRepository : IServerRepository
                     ipv4: !networkId.HasValue
                 );
         }
-        catch (Exception e) // TODO what exception?
+        catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            throw new ServerCreationException(
+                $"Failed to create server '{serverName}' on Hetzner: {e.Message}",
+                e
+            );
         }
 
         await AddServerState(
@@ -178,17 +181,20 @@ internal partial class ServerRepository : IServerRepository
             cancellationToken
         );
 
-        var errorMessage =
+        try
+        {
             await ServerIsReady(
                 server.Id,
                 initialContainerName,
                 userPassword,
                 cancellationToken
             );
-        if (errorMessage is not null)
+        }
+        catch (Exception e) when (e is ServerNotReadyException or MissingIpException or ServerNotFoundException or SshConnectionException)
         {
-            throw new InvalidOperationException(
-                $"Server {serverName} is not ready: {errorMessage}"
+            throw new ServerCreationException(
+                $"Server '{serverName}' created but failed readiness check: {e.Message}",
+                e
             );
         }
 
@@ -206,7 +212,7 @@ internal partial class ServerRepository : IServerRepository
     /// </summary>
     /// <param name="serverName">The name of the server to delete.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <exception cref="ArgumentException">Thrown when the server does not exist.</exception>
+    /// <exception cref="ServerNotFoundException">Thrown when the server does not exist.</exception>
     public async Task DeleteServer(
         string serverName,
         CancellationToken cancellationToken = default)
@@ -217,7 +223,7 @@ internal partial class ServerRepository : IServerRepository
             _serverStates.SingleOrDefault(s => s.Name == serverName);
         if (serverState == null)
         {
-            throw new ArgumentException(
+            throw new ServerNotFoundException(
                 $"Server with name {serverName} does not exist."
             );
         }
@@ -239,11 +245,9 @@ internal partial class ServerRepository : IServerRepository
     /// <param name="commands">The commands to run.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The result of each command.</returns>
-    /// <exception cref="ArgumentException">Thrown when the given server does not exist.</exception>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the server does not have a public IP Address
-    /// or there was an error running a command.
-    /// </exception>
+    /// <exception cref="ServerNotFoundException">Thrown when the given server does not exist.</exception>
+    /// <exception cref="MissingIpException">Thrown when the server does not have a public IP Address.</exception>
+    /// <exception cref="SshConnectionException">Thrown when there was an error running a command.</exception>
     public async IAsyncEnumerable<string> ExecuteCommandsOnServer(
         string serverName,
         IEnumerable<string> commands,
@@ -255,7 +259,7 @@ internal partial class ServerRepository : IServerRepository
             _serverStates.SingleOrDefault(s => s.Name == serverName);
         if (serverState == null)
         {
-            throw new ArgumentException(
+            throw new ServerNotFoundException(
                 $"Server with name {serverName} does not exist."
             );
         }
@@ -269,7 +273,7 @@ internal partial class ServerRepository : IServerRepository
 
         if (serverIp == null)
         {
-            throw new InvalidOperationException(
+            throw new MissingIpException(
                 $"Server {serverName} does not have a public or private IP address."
             );
         }
@@ -446,7 +450,7 @@ internal partial class ServerRepository : IServerRepository
             }
 
             sshClient.Disconnect();
-            throw new InvalidOperationException(
+            throw new SshConnectionException(
                 $"Error executing setup command '{command}': {sshCommand.Error.Trim()}."
             );
         }
@@ -454,7 +458,7 @@ internal partial class ServerRepository : IServerRepository
         sshClient.Disconnect();
     }
 
-    private async Task<string?> ServerIsReady(
+    private async Task ServerIsReady(
         long serverId,
         string containerName,
         string userPassword,
@@ -470,7 +474,7 @@ internal partial class ServerRepository : IServerRepository
 
             if (server == null)
             {
-                return "Server not found on Hetzner";
+                throw new ServerNotFoundException("Server not found on Hetzner");
             }
 
             switch (server.Status)
@@ -481,7 +485,7 @@ internal partial class ServerRepository : IServerRepository
                     isReady = true;
                     break;
                 default:
-                    return $"Unknown server status: {server.Status}";
+                    throw new ServerNotReadyException($"Unknown server status: {server.Status}");
             }
         }
 
@@ -496,7 +500,7 @@ internal partial class ServerRepository : IServerRepository
 
         if (serverIp == null)
         {
-            return "Server does not have a public or private IP address.";
+            throw new MissingIpException("Server does not have a public or private IP address.");
         }
 
         // Check if there are no errors in the cloud-init logs
@@ -511,8 +515,9 @@ internal partial class ServerRepository : IServerRepository
 
         if (errorLogs.WhereNotEmptyOrNull().Any())
         {
-            return
-                $"Errors found when initializing server: {string.Join("\n", errorLogs)}";
+            throw new ServerNotReadyException(
+                $"Errors found when initializing server: {string.Join("\n", errorLogs)}"
+            );
         }
 
         // Check if a container is running
@@ -525,10 +530,8 @@ internal partial class ServerRepository : IServerRepository
 
         if (containerIsRunning is false)
         {
-            return "Container is not running. Please check the logs.";
+            throw new ServerNotReadyException("Container is not running. Please check the logs.");
         }
-
-        return null;
     }
 
     /// <summary>

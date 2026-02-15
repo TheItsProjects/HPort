@@ -1,3 +1,4 @@
+using ItsNameless.HPort.Exceptions;
 using ItsNameless.HPort.Extensions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -19,7 +20,7 @@ public class SshClientExtensionsTest
             .ThrowsAsyncForAnyArgs(new Exception());
 
         // Act & Assert
-        Assert.ThrowsAsync<InvalidOperationException>(
+        Assert.ThrowsAsync<SshConnectionException>(
             () => sshClient.TryConnectAsync()
         );
 

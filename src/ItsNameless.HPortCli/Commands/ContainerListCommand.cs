@@ -21,7 +21,7 @@ public class ContainerListCommand(IHPort hPort)
     )]
     public string? ServerName { get; set; }
 
-    public async Task RunAsync(CliContext context)
+    public async Task<int> RunAsync(CliContext context)
     {
         try
         {
@@ -30,7 +30,7 @@ public class ContainerListCommand(IHPort hPort)
             if (containers.Count == 0)
             {
                 await context.Output.WriteLineAsync("No containers found.");
-                return;
+                return 0;
             }
 
             await context.Output.WriteLineAsync($"{"Container Name",-20} | {"Server Name",-20}");
@@ -44,6 +44,9 @@ public class ContainerListCommand(IHPort hPort)
         catch (Exception ex)
         {
             await context.Error.WriteLineAsync($"Error: {ex.Message}");
+            return 1;
         }
+
+        return 0;
     }
 }

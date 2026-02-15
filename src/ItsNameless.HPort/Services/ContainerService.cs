@@ -1,4 +1,5 @@
 using System.IO.Abstractions;
+using ItsNameless.HPort.Exceptions;
 using ItsNameless.HPort.Models;
 using ItsNameless.HPort.Repositories;
 
@@ -37,7 +38,8 @@ public class ContainerService : IContainerService
     /// <param name="uniqueServer">Whether the service should receive a unique server.</param>
     /// <param name="networkId">The internal network ID.</param>
     /// <returns>The created <see cref="PortContainer"/>.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when there was an error creating the server.</exception>
+    /// <exception cref="ContainerOperationException">Thrown when there was an error creating the container.</exception>
+    /// <exception cref="ServerCreationException">Thrown when there was an error creating the server.</exception>
     public async Task<PortContainer> CreateContainer(
         string containerName,
         PortServerType serverType,
@@ -66,7 +68,7 @@ public class ContainerService : IContainerService
 
         if (existingServer is not null && uniqueServer)
         {
-            throw new InvalidOperationException(
+            throw new ContainerOperationException(
                 "Cannot create container with unique server, " +
                 $"because a server with the name {serverName} already exists."
             );
@@ -99,7 +101,7 @@ public class ContainerService : IContainerService
     /// </summary>
     /// <param name="serverName">The server to search on.</param>
     /// <returns>A list of containers.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when the server does not exist.</exception>
+    /// <exception cref="ServerNotFoundException">Thrown when the server does not exist.</exception>
     public async Task<List<PortContainer>> GetContainers(
         string? serverName = null)
     {
@@ -120,7 +122,8 @@ public class ContainerService : IContainerService
     /// <param name="command">The command to run in the container.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The result text.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when there was an error while executing the command.</exception>
+    /// <exception cref="ContainerOperationException">Thrown when there was an error while executing the command.</exception>
+    /// <exception cref="ServerNotFoundException">Thrown when the server does not exist.</exception>
     public async Task<string> ExecuteCommandInContainer(
         string containerName,
         string serverName,
@@ -150,10 +153,8 @@ public class ContainerService : IContainerService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <typeparam name="T">The required type to return.</typeparam>
     /// <returns>The <typeparamref name="T"/>.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the server does not exist or there was
-    /// an error while executing the command.
-    /// </exception>
+    /// <exception cref="ContainerOperationException">Thrown when there was an error while executing the command.</exception>
+    /// <exception cref="ServerNotFoundException">Thrown when the server does not exist.</exception>
     public async Task<T> ExecuteCommandInContainer<T>(
         string containerName,
         string serverName,
@@ -168,7 +169,7 @@ public class ContainerService : IContainerService
 
         if (server is null)
         {
-            throw new InvalidOperationException(
+            throw new ServerNotFoundException(
                 $"Server {serverName} does not exist."
             );
         }
@@ -191,7 +192,8 @@ public class ContainerService : IContainerService
     /// <param name="serverName">The name of the server the container is on.</param>
     /// <param name="deleteServerIfEmpty">If true, deletes the server if it is empty.</param>
     /// <returns>The deleted container.</returns>
-    /// <exception cref="InvalidOperationException">Thrown if the server does not exist.</exception>
+    /// <exception cref="ContainerOperationException">Thrown when there was an error deleting the container.</exception>
+    /// <exception cref="ServerNotFoundException">Thrown if the server does not exist.</exception>
     public async Task<PortContainer> DeleteContainer(
         string containerName,
         string serverName,

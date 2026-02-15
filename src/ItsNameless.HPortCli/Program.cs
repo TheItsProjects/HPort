@@ -9,7 +9,7 @@ var stateFile = Environment.GetEnvironmentVariable("HPORT_STATE_FILE") ?? "serve
 if (string.IsNullOrEmpty(token))
 {
     Console.Error.WriteLine("Error: HPORT_TOKEN environment variable is not set.");
-    return;
+    Environment.Exit(1);
 }
 
 var hport = await HPort.WithDefaultsAsync(token, stateFile);
