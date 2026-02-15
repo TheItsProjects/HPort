@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Bogus"/>
+        <PackageReference Include="coverlet.collector"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="NSubstitute"/>
+        <PackageReference Include="NUnit"/>
+        <PackageReference Include="NUnit.Analyzers"/>
+        <PackageReference Include="NUnit3TestAdapter"/>
+        <PackageReference Include="Reqnroll"/>
+        <PackageReference Include="Reqnroll.NUnit"/>
+        <PackageReference Include="System.IO.Abstractions"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="NUnit.Framework"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ItsNameless.HPort.TestUtils\ItsNameless.HPort.TestUtils.csproj" />
+      <ProjectReference Include="..\..\src\ItsNameless.HPort\ItsNameless.HPort.csproj" />
+      <ProjectReference Include="..\..\src\ItsNameless.HPortCli\ItsNameless.HPortCli.csproj" />
+    </ItemGroup>
+
+</Project>

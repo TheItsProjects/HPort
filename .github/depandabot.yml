@@ -1,0 +1,30 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/" 
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 6
+    
+    # Separation of Minor/Patch vs Major updates
+    groups:
+      # Group 1: Non-breaking changes (Safe to auto-merge if tests pass)
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Group 2: Major updates (Likely requires manual code changes)
+      major-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "major"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"

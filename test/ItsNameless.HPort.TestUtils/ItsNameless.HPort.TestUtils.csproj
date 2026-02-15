@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>ItsNameless.HPort.Test.Utils</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\ItsNameless.HPort\ItsNameless.HPort.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Bogus"/>
+        <PackageReference Include="NSubstitute"/>
+    </ItemGroup>
+
+</Project>

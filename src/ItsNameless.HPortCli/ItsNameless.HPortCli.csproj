@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BCrypt.Net-Next"/>
+        <PackageReference Include="DotMake.CommandLine"/>
+        <PackageReference Include="HetznerCloud.API"/>
+        <PackageReference Include="InterfaceGenerator">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
+        <PackageReference Include="SSH.NET"/>
+        <PackageReference Include="System.IO.Abstractions"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\ItsNameless.HPort\ItsNameless.HPort.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Commands\ContainerCreateCommand.cs">
+            <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Commands\ContainerDeleteCommand.cs">
+          <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Commands\ContainerExecuteCommand.cs">
+          <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Commands\ContainerListCommand.cs">
+          <DependentUpon>ContainerCommand.cs</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+</Project>
