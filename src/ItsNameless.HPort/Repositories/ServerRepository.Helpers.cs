@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using ItsNameless.HPort.Models;
 using static BCrypt.Net.BCrypt;
 
@@ -43,11 +44,10 @@ internal partial class ServerRepository
         const string chars =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var password = new char[length];
-        var random = new Random();
 
         for (int i = 0; i < length; i++)
         {
-            password[i] = chars[random.Next(chars.Length)];
+            password[i] = chars[RandomNumberGenerator.GetInt32(chars.Length)];
         }
 
         return new string(password);

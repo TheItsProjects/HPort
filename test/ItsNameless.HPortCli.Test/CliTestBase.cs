@@ -56,6 +56,8 @@ public abstract class CliTestBase
     protected async Task<int> RunCommand(params string[] args)
     {
         // Reset StringWriters if they were used before in the same test
+        await Output.DisposeAsync();
+        await Error.DisposeAsync();
         Output = new StringWriter();
         Error = new StringWriter();
 
