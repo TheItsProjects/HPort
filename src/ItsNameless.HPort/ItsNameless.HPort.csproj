@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-      <PackageReference Include="HetznerCloud.API" Version="1.1.9" />
-      <PackageReference Include="InterfaceGenerator" Version="1.0.14">
+        <PackageReference Include="BCrypt.Net-Next"/>
+        <PackageReference Include="HetznerCloud.API"/>
+        <PackageReference Include="InterfaceGenerator">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="SSH.NET" Version="2025.0.0" />
-      <PackageReference Include="System.IO.Abstractions" Version="22.0.15" />
+        <PackageReference Include="SSH.NET"/>
+        <PackageReference Include="System.IO.Abstractions"/>
     </ItemGroup>
 
     <ItemGroup>

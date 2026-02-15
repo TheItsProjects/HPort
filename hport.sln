@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{CB9E34C9-C
 		AGENTS.md = AGENTS.md
 		LICENSE = LICENSE
 		README.md = README.md
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{F299C33B-76FC-4DBC-BF68-11B70F63B21B}"

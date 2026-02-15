@@ -1,39 +1,40 @@
 {
-  "context": {
-    "fileName": [
-      "AGENTS.md",
-      "GEMINI.md"
-    ],
-    "fileFiltering": {
-      "respectGitIgnore": true
-    }
-  },
-  "general": {
-    "previewFeatures": true
-  },
-  "experimental": {
-    "plan": true
-  },
-  "tools": {
-    "approvalMode": "plan",
-    "allowed": [
-      "read_file",
-      "list_directory",
-      "glob",
-      "grep_search",
-      "google_web_search",
-      "run_shell_command(git status)",
-      "run_shell_command(git diff)",
-      "run_shell_command(git branch)",
-      "run_shell_command(git log)",
-      "run_shell_command(dotnet build)",
-      "run_shell_command(dotnet test)"
-    ]
-  },
-  "security": {
-    "environmentVariableRedaction": {
-      "enabled": true
+    "context": {
+        "fileName": [
+            "AGENTS.md",
+            "GEMINI.md"
+        ],
+        "fileFiltering": {
+            "respectGitIgnore": true
+        }
     },
-    "disableYoloMode": true
-  }
+    "general": {
+        "previewFeatures": true
+    },
+    "experimental": {
+        "plan": true
+    },
+    "tools": {
+        "approvalMode": "plan",
+        "allowed": [
+            "read_file",
+            "list_directory",
+            "glob",
+            "grep_search",
+            "google_web_search",
+            "run_shell_command(git status)",
+            "run_shell_command(git diff)",
+            "run_shell_command(git branch)",
+            "run_shell_command(git log)",
+            "run_shell_command(dotnet build)",
+            "run_shell_command(dotnet test)",
+            "run_shell_command(dotnet restore)"
+        ]
+    },
+    "security": {
+        "environmentVariableRedaction": {
+            "enabled": true
+        },
+        "disableYoloMode": true
+    }
 }
