@@ -1,6 +1,4 @@
-using System.IO.Abstractions;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using ItsNameless.HPort.Exceptions;
 using ItsNameless.HPort.Extensions;
 using ItsNameless.HPort.Models;
@@ -14,26 +12,20 @@ namespace ItsNameless.HPort.Repositories;
 [GenerateAutoInterface]
 internal partial class ServerRepository : IServerRepository
 {
-    private readonly string _filePath;
-    private readonly IFileSystem _fileSystem;
-    private List<ServerState> _serverStates = new();
-
     private readonly HetznerCloudClient _hetznerCloudClient;
+    private readonly IServerStateRepository _stateRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ServerRepository"/> class.
     /// </summary>
-    /// <param name="filePath">Path to the .json config file to save server states to.</param>
     /// <param name="hetznerCloudClient">The client to use for interacting with the Hetzner API.</param>
-    /// <param name="fileSystem">The file system to use for saving and loading the server states.</param>
+    /// <param name="stateRepository">The repository for managing server states.</param>
     public ServerRepository(
-        string filePath,
         HetznerCloudClient hetznerCloudClient,
-        IFileSystem fileSystem)
+        IServerStateRepository stateRepository)
     {
-        _filePath = filePath;
         _hetznerCloudClient = hetznerCloudClient;
-        _fileSystem = fileSystem;
+        _stateRepository = stateRepository;
     }
 
     /// <summary>
@@ -43,17 +35,14 @@ internal partial class ServerRepository : IServerRepository
     /// <param name="cancellationToken">The cancellation token.</param>
     public async Task SetupAsync(CancellationToken cancellationToken = default)
     {
-        await LoadServerStatesAsync(cancellationToken);
+        await _stateRepository.SetupAsync(cancellationToken);
     }
 
     /// <summary>
     /// Sets up the repository by loading the server states from the file.
     /// This should be called before any other operations.
     /// </summary>
-    public void Setup()
-    {
-        LoadServerStates();
-    }
+    public void Setup() { _stateRepository.Setup(); }
 
     /// <summary>
     /// Gets the server from the local State data and the Hetzner API.
@@ -68,7 +57,7 @@ internal partial class ServerRepository : IServerRepository
         await RefreshServerStates(cancellationToken);
 
         var serverState =
-            _serverStates.SingleOrDefault(s => s.Name == serverName);
+            await _stateRepository.GetAsync(serverName, cancellationToken);
         if (serverState == null)
         {
             return null;
@@ -89,8 +78,10 @@ internal partial class ServerRepository : IServerRepository
     {
         await RefreshServerStates(cancellationToken);
 
+        var serverStates =
+            await _stateRepository.GetAllAsync(cancellationToken);
         List<PortServer> servers = [];
-        foreach (var serverState in _serverStates)
+        foreach (var serverState in serverStates)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -134,7 +125,9 @@ internal partial class ServerRepository : IServerRepository
     {
         await RefreshServerStates(cancellationToken);
 
-        if (_serverStates.Select(state => state.Name).Contains(serverName))
+        var existingServer =
+            await _stateRepository.GetAsync(serverName, cancellationToken);
+        if (existingServer != null)
         {
             throw new ArgumentException(
                 $"Server with name {serverName} already exists"
@@ -162,7 +155,9 @@ internal partial class ServerRepository : IServerRepository
                     (long)serverType,
                     sshKeysIds: sshKeyId != null ? [sshKeyId.Value,] : [],
                     userData: cloudConfig,
-                    privateNetoworksIds: networkId.HasValue ? [networkId.Value,] : [],
+                    privateNetoworksIds: networkId.HasValue
+                        ? [networkId.Value,]
+                        : [],
                     ipv4: !networkId.HasValue
                 );
         }
@@ -190,7 +185,10 @@ internal partial class ServerRepository : IServerRepository
                 cancellationToken
             );
         }
-        catch (Exception e) when (e is ServerNotReadyException or MissingIpException or ServerNotFoundException or SshConnectionException)
+        catch (Exception e) when (e is ServerNotReadyException
+                                      or MissingIpException
+                                      or ServerNotFoundException
+                                      or SshConnectionException)
         {
             throw new ServerCreationException(
                 $"Server '{serverName}' created but failed readiness check: {e.Message}",
@@ -220,7 +218,7 @@ internal partial class ServerRepository : IServerRepository
         await RefreshServerStates(cancellationToken);
 
         var serverState =
-            _serverStates.SingleOrDefault(s => s.Name == serverName);
+            await _stateRepository.GetAsync(serverName, cancellationToken);
         if (serverState == null)
         {
             throw new ServerNotFoundException(
@@ -232,8 +230,7 @@ internal partial class ServerRepository : IServerRepository
 
         await _hetznerCloudClient.Server.Delete(server.Id);
 
-        _serverStates.Remove(serverState);
-        await SaveServerStates(cancellationToken);
+        await _stateRepository.RemoveAsync(serverName, cancellationToken);
     }
 
     /// <summary>
@@ -256,7 +253,7 @@ internal partial class ServerRepository : IServerRepository
         await RefreshServerStates(cancellationToken);
 
         var serverState =
-            _serverStates.SingleOrDefault(s => s.Name == serverName);
+            await _stateRepository.GetAsync(serverName, cancellationToken);
         if (serverState == null)
         {
             throw new ServerNotFoundException(
@@ -266,7 +263,8 @@ internal partial class ServerRepository : IServerRepository
 
         var server = await _hetznerCloudClient.Server.Get(serverState.Id);
         string? serverIp = server.PublicNet.Ipv4?.Ip;
-        if (serverIp == null && server.PrivateNet != null && server.PrivateNet.Any())
+        if (serverIp == null && server.PrivateNet != null &&
+            server.PrivateNet.Any())
         {
             serverIp = server.PrivateNet.First().Ip;
         }
@@ -339,86 +337,24 @@ internal partial class ServerRepository : IServerRepository
         string userPassword,
         CancellationToken cancellationToken = default)
     {
-        await RefreshServerStates(cancellationToken);
-        _serverStates.Add(
+        await _stateRepository.AddAsync(
             new ServerState
             {
                 Name = serverName,
                 Id = id,
                 UserPassword = userPassword
-            }
+            },
+            cancellationToken
         );
-        await SaveServerStates(cancellationToken);
     }
 
     private async Task RefreshServerStates(
         CancellationToken cancellationToken = default)
     {
-        await LoadServerStatesAsync(cancellationToken);
-
         var actualServers = await _hetznerCloudClient.Server.Get();
         var actualServerIds = actualServers.Select(s => s.Id).ToList();
-        foreach (var server in _serverStates.ToList())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
 
-            if (actualServerIds.Contains(server.Id))
-            {
-                continue;
-            }
-
-            _serverStates.Remove(server);
-        }
-
-        await SaveServerStates(cancellationToken);
-    }
-
-    private async Task SaveServerStates(
-        CancellationToken cancellationToken = default)
-    {
-        var json =
-            JsonSerializer.Serialize(
-                _serverStates,
-                new JsonSerializerOptions { WriteIndented = true, }
-            );
-        await _fileSystem.File.WriteAllTextAsync(
-            _filePath,
-            json,
-            cancellationToken
-        );
-    }
-
-    private async Task LoadServerStatesAsync(
-        CancellationToken cancellationToken = default)
-    {
-        if (!_fileSystem.File.Exists(_filePath))
-        {
-            _serverStates = [];
-            return;
-        }
-
-        var json =
-            await _fileSystem.File.ReadAllTextAsync(
-                _filePath,
-                cancellationToken
-            );
-        _serverStates =
-            JsonSerializer.Deserialize<List<ServerState>>(json) ??
-            [];
-    }
-
-    private void LoadServerStates()
-    {
-        if (!_fileSystem.File.Exists(_filePath))
-        {
-            _serverStates = [];
-            return;
-        }
-
-        var json = _fileSystem.File.ReadAllText(_filePath);
-        _serverStates =
-            JsonSerializer.Deserialize<List<ServerState>>(json) ??
-            [];
+        await _stateRepository.PruneAsync(actualServerIds, cancellationToken);
     }
 
     private static async IAsyncEnumerable<string> ExecuteCommands(
@@ -474,7 +410,9 @@ internal partial class ServerRepository : IServerRepository
 
             if (server == null)
             {
-                throw new ServerNotFoundException("Server not found on Hetzner");
+                throw new ServerNotFoundException(
+                    "Server not found on Hetzner"
+                );
             }
 
             switch (server.Status)
@@ -485,7 +423,9 @@ internal partial class ServerRepository : IServerRepository
                     isReady = true;
                     break;
                 default:
-                    throw new ServerNotReadyException($"Unknown server status: {server.Status}");
+                    throw new ServerNotReadyException(
+                        $"Unknown server status: {server.Status}"
+                    );
             }
         }
 
@@ -493,14 +433,17 @@ internal partial class ServerRepository : IServerRepository
         await Task.Delay(10_000, cancellationToken);
 
         string? serverIp = server.PublicNet.Ipv4?.Ip;
-        if (serverIp == null && server.PrivateNet != null && server.PrivateNet.Any())
+        if (serverIp == null && server.PrivateNet != null &&
+            server.PrivateNet.Any())
         {
             serverIp = server.PrivateNet.First().Ip;
         }
 
         if (serverIp == null)
         {
-            throw new MissingIpException("Server does not have a public or private IP address.");
+            throw new MissingIpException(
+                "Server does not have a public or private IP address."
+            );
         }
 
         // Check if there are no errors in the cloud-init logs
@@ -530,7 +473,9 @@ internal partial class ServerRepository : IServerRepository
 
         if (containerIsRunning is false)
         {
-            throw new ServerNotReadyException("Container is not running. Please check the logs.");
+            throw new ServerNotReadyException(
+                "Container is not running. Please check the logs."
+            );
         }
     }
 
@@ -547,12 +492,5 @@ internal partial class ServerRepository : IServerRepository
         return string.IsNullOrEmpty(command.Result.Trim())
             ? command.Error.Trim()
             : command.Result.Trim();
-    }
-
-    private record ServerState
-    {
-        public required string Name { get; init; }
-        public required long Id { get; init; }
-        public required string UserPassword { get; init; }
     }
 }

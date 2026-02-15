@@ -33,11 +33,12 @@ public class HPort : IHPort
     {
         var fileSystem = new FileSystem();
         var hetznerCloudClient = new HetznerCloudClient(hetznerToken);
+        var serverStateRepository =
+            new ServerStateRepository(serverStatesFilePath, fileSystem);
         var serverRepository =
             new ServerRepository(
-                serverStatesFilePath,
                 hetznerCloudClient,
-                fileSystem
+                serverStateRepository
             );
         var containerRepository = new ContainerRepository(serverRepository);
         var containerService =
@@ -62,11 +63,12 @@ public class HPort : IHPort
 
         var fileSystem = new FileSystem();
         var hetznerCloudClient = new HetznerCloudClient(hetznerToken);
+        var serverStateRepository =
+            new ServerStateRepository(serverStatesFilePath, fileSystem);
         var serverRepository =
             new ServerRepository(
-                serverStatesFilePath,
                 hetznerCloudClient,
-                fileSystem
+                serverStateRepository
             );
         var containerRepository = new ContainerRepository(serverRepository);
         var containerService =
