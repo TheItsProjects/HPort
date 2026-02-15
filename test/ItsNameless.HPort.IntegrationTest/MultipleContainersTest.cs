@@ -4,7 +4,7 @@ namespace ItsNameless.HPort.IntegrationTest;
 [TestOf(typeof(HPort))]
 public class MultipleContainersTest : TestBase
 {
-    [Test, Order(1),]
+    [Test, Order(1)]
     public async Task
         AddFirstContainer_NoServerExists_CreatesServer_AndAddsContainer()
     {
@@ -60,7 +60,7 @@ public class MultipleContainersTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(2),]
+    [Test, Order(2)]
     public async Task
         AddSecondContainer_ServerExists_AddsContainer()
     {
@@ -105,7 +105,7 @@ public class MultipleContainersTest : TestBase
     }
 
 
-    [Test, Order(11),]
+    [Test, Order(11)]
     public async Task
         CheckFirstContainer_RunsCommandInContainer_AndReturnsResult()
     {
@@ -129,7 +129,7 @@ public class MultipleContainersTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(12),]
+    [Test, Order(12)]
     public async Task
         CheckSecondContainer_RunsCommandInContainer_AndReturnsResult()
     {
@@ -153,7 +153,7 @@ public class MultipleContainersTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(91),]
+    [Test, Order(91)]
     public async Task DeleteFirstContainer_DeletesContainer_AndKeepsServer()
     {
         // Act
@@ -184,7 +184,7 @@ public class MultipleContainersTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(92),]
+    [Test, Order(92)]
     public async Task DeleteSecondContainer_DeletesContainer_AndServer()
     {
         // Act
@@ -215,7 +215,7 @@ public class MultipleContainersTest : TestBase
         await Log("Test completed.");
     }
 
-    [Test, Order(93),]
+    [Test, Order(93)]
     public async Task CheckContainer_ServerDeleted_ServerDoesNotExistAnymore()
     {
         // Act

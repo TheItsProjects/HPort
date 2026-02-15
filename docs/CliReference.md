@@ -23,20 +23,20 @@ Creates a new container. If the specified server requirements cannot be met by a
 
 **Usage**:
 ```bash
-hport container create <name> --compose <path> --env <path> [options]
+hport container create --name <name> --compose <path> --env <path> [options]
 ```
 
-**Arguments**:
-- `<name>`: The name of the container/application.
-
 **Options**:
+
+- `--name <name>` **(Required)**: The name of the container/application.
 - `--compose <path>` **(Required)**: Path to the `docker-compose.yml` file.
 - `--env <path>` **(Required)**: Path to the `.env` file containing environment variables for the compose file.
 - `--type <type>`: Hetzner server type (e.g., `Cx23`, `Cpx12`, `Cax11`). *Default: `Cx22`*.
-- `--location <loc>`: Datacenter location (e.g., `Nbg` (Nuremberg), `Hel` (Helsinki), `Fsn` (Falkenstein)). *Default: `Nbg`*.
-- `--unique`: If present, ensures the container is deployed to a brand new server, even if others are available.
+- `--datacenter <loc>`: Datacenter location (e.g., `Nbg` (Nuremberg), `Hel` (Helsinki), `Fsn` (Falkenstein)).
+  *Default: `Nbg`*.
+- `--is-unique`: If present, ensures the container is deployed to a brand new server, even if others are available.
 - `--ssh-key <id>`: The numeric ID of an SSH key in your Hetzner project. This key will be added to the server's root user.
-- `--network <id>`: The numeric ID of a Hetzner Cloud Private Network to attach the server to.
+- `--internal-network <id>`: The numeric ID of a Hetzner Cloud Private Network to attach the server to.
 
 ### `list`
 
@@ -56,15 +56,14 @@ Deletes a container. By default, if the container is the last one on a server, t
 
 **Usage**:
 ```bash
-hport container delete <name> --server <server-name> [options]
+hport container delete --name <name> --server <server-name> [options]
 ```
 
-**Arguments**:
-- `<name>`: The name of the container to delete.
-
 **Options**:
+
+- `--name <name>` **(Required)**: The name of the container to delete.
 - `--server <name>` **(Required)**: The name of the server where the container is running (retrievable via `list`).
-- `--keep-server`: If present, prevents the server from being deleted even if it becomes empty.
+- `--delete-server`: Whether to delete the server if it becomes empty. Defaults to `true`.
 
 ### `execute`
 
@@ -72,13 +71,12 @@ Executes a shell command inside a running container's service.
 
 **Usage**:
 ```bash
-hport container execute <name> --server <server-name> --service <service> --command <cmd>
+hport container execute --name <name> --server <server-name> --service <service> --command <cmd>
 ```
 
-**Arguments**:
-- `<name>`: The name of the container.
-
 **Options**:
+
+- `--name <name>` **(Required)**: The name of the container.
 - `--server <name>` **(Required)**: The server name.
 - `--service <name>` **(Required)**: The service name as defined in your `docker-compose.yml` (e.g., `web`, `db`).
 - `--command <cmd>` **(Required)**: The command to run (e.g., `ls -la`, `rails console`).
@@ -89,10 +87,11 @@ hport container execute <name> --server <server-name> --service <service> --comm
 
 **1. Deploy a simple web app:**
 ```bash
-hport container create my-website 
-  --compose ./deploy/docker-compose.yml 
-  --env ./deploy/.env 
-  --location hel
+hport container create \
+  --name my-website \
+  --compose ./deploy/docker-compose.yml \
+  --env ./deploy/.env \
+  --datacenter hel
 ```
 
 **2. List all containers:**
@@ -102,13 +101,16 @@ hport container list
 
 **3. Run a database migration inside a container:**
 ```bash
-hport container execute my-website 
-  --server my-website-server 
-  --service backend 
+hport container execute \
+  --name my-website \
+  --server my-website-server \
+  --service backend \
   --command "dotnet ef database update"
 ```
 
 **4. Delete an app (and its server):**
 ```bash
-hport container delete my-website --server my-website-server
+hport container delete \
+  --name my-website \
+  --server my-website-server
 ```

@@ -16,7 +16,9 @@ This is your Hetzner Cloud API Token. HPort uses this to authenticate against th
 
 ### `HPORT_STATE_FILE` (Optional)
 
-HPort maintains a local state file to track servers it has created. This is crucial because it stores the **generated root passwords** for the servers, which are not retrievable from Hetzner after creation.
+HPort maintains a local state file to track servers it has created. This is crucial because it stores the **generated
+passwords** for the `deploy` user (which has sudo privileges) on the servers. These passwords are not retrievable from
+Hetzner after creation.
 
 *   **Type**: File Path
 *   **Default**: `serverStates.json` (in the current working directory)

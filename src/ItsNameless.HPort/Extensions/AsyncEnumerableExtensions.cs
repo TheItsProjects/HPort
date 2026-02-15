@@ -37,7 +37,8 @@ internal static class AsyncEnumerableExtensions
         this IAsyncEnumerable<T> source,
         CancellationToken cancellationToken = default)
     {
-        var enumerator = source.GetAsyncEnumerator(cancellationToken);
+        await using var enumerator =
+            source.GetAsyncEnumerator(cancellationToken);
         if (await enumerator.MoveNextAsync())
         {
             var result = enumerator.Current;

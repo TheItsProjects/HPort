@@ -418,6 +418,7 @@ internal partial class ServerRepository : IServerRepository
             switch (server.Status)
             {
                 case SERVER_CREATING_STATUS or SERVER_STARTING_STATUS:
+                    await Task.Delay(2000, cancellationToken);
                     continue;
                 case SERVER_READY_STATUS:
                     isReady = true;
