@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/theitsprojects/hport/wiki
+    about: Read the official documentation to find answers or learn how to use HPort.
+    
+  - name: 💬 Support & Discussions
+    url: https://github.com/theitsprojects/hport/discussions
+    about: Ask questions, share ideas, or get help with implementation details.
+
+  - name: 🛡️  Security Policy
+    url: https://github.com/theitsprojects/hport/security/policy
+    about: Review our security policy before reporting vulnerabilities.
