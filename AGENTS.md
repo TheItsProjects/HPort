@@ -1,4 +1,4 @@
-# GEMINI.md - Project Context: HPort
+# AGENTS.md - Project Context: HPort
 
 ## Project Overview
 HPort is a .NET-based solution designed to streamline the management of Docker containers on Hetzner Cloud servers. It provides a library and a CLI tool to automate the provisioning of cloud servers and the deployment of containers using Docker Compose over SSH.
