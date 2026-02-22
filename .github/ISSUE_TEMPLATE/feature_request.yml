@@ -3,7 +3,6 @@ description: Suggest an idea for this project
 title: "[FEATURE] "
 labels: ["enhancement"]
 projects: ["TheItsProjects/6"]
-type: Feature
 body:
   - type: textarea
     id: description
