@@ -62,4 +62,4 @@ The project follows a clean architecture pattern with a clear separation between
 
 - **Repository Name:** HPort
 - **Owner:** TheItsProjects
-- **GitHub URL:** [TheItsProjects/HPort](https://github.com/TheItsProjects/HPort)
+- **GitHub URL:** [theitsprojects/hport](https://github.com/theitsprojects/hport)

@@ -24,6 +24,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Test
+        run: dotnet test --configuration Release
+
       - name: Build and Pack
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
@@ -34,4 +37,4 @@ jobs:
         run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
 
       - name: Push to GitHub Packages
-        run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/TheItsProjects/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+        run: dotnet nuget push ./nupkg/*.nupkg --source https://nuget.pkg.github.com/theitsprojects/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
