@@ -7,6 +7,21 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>ItsNameless.HPortCli</PackageId>
+        <Authors>ItsNameless</Authors>
+        <Description>A CLI tool for automating the management of Docker containers on Hetzner Cloud.</Description>
+        <PackageTags>hetzner;docker;cloud;cli;tool;hport</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/theitsprojects/hport</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/theitsprojects/hport</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>hport</ToolCommandName>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next"/>
         <PackageReference Include="DotMake.CommandLine"/>
@@ -29,17 +44,21 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <Compile Update="Commands\ContainerCreateCommand.cs">
             <DependentUpon>ContainerCommand.cs</DependentUpon>
         </Compile>
         <Compile Update="Commands\ContainerDeleteCommand.cs">
-          <DependentUpon>ContainerCommand.cs</DependentUpon>
+            <DependentUpon>ContainerCommand.cs</DependentUpon>
         </Compile>
         <Compile Update="Commands\ContainerExecuteCommand.cs">
-          <DependentUpon>ContainerCommand.cs</DependentUpon>
+            <DependentUpon>ContainerCommand.cs</DependentUpon>
         </Compile>
         <Compile Update="Commands\ContainerListCommand.cs">
-          <DependentUpon>ContainerCommand.cs</DependentUpon>
+            <DependentUpon>ContainerCommand.cs</DependentUpon>
         </Compile>
     </ItemGroup>
 

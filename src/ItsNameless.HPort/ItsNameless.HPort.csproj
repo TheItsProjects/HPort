@@ -6,33 +6,49 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>ItsNameless.HPort</PackageId>
+        <Authors>ItsNameless</Authors>
+        <Description>A .NET library for automating the management of Docker containers on Hetzner Cloud.</Description>
+        <PackageTags>hetzner;docker;cloud;deployment;containers</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/theitsprojects/hport</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/theitsprojects/hport</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next"/>
         <PackageReference Include="HetznerCloud.API"/>
         <PackageReference Include="InterfaceGenerator">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="SSH.NET"/>
         <PackageReference Include="System.IO.Abstractions"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="ItsNameless.HPort.Test" />
-        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test" />
-        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Repositories\ServerRepository.Name.cs">
-        <DependentUpon>ServerRepository.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Repositories\ServerRepository.Commands.cs">
-        <DependentUpon>ServerRepository.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Repositories\ServerRepository.Helpers.cs">
-        <DependentUpon>ServerRepository.cs</DependentUpon>
-      </Compile>
+        <InternalsVisibleTo Include="ItsNameless.HPort.Test"/>
+        <InternalsVisibleTo Include="ItsNameless.HPortCli.Test"/>
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Repositories\ServerRepository.Name.cs">
+            <DependentUpon>ServerRepository.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Repositories\ServerRepository.Commands.cs">
+            <DependentUpon>ServerRepository.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Repositories\ServerRepository.Helpers.cs">
+            <DependentUpon>ServerRepository.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>
