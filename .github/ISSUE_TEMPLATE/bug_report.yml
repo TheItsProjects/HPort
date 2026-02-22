@@ -2,6 +2,8 @@ name: 🪲 Bug report
 description: Create a report to help us improve
 title: "[BUG] "
 labels: ["bug"]
+projects: ["TheItsProjects/6"]
+type: Bug
 body:
   - type: textarea
     id: description

@@ -57,3 +57,9 @@ The project follows a clean architecture pattern with a clear separation between
 - `src/ItsNameless.HPort/HPort.cs`: Entry point for library consumers.
 - `src/ItsNameless.HPortCli/Program.cs`: Entry point for the CLI application.
 - `serverStates.json`: Default file used to persist state about managed servers (e.g., generated passwords).
+
+## Project Repository Details
+
+- **Repository Name:** HPort
+- **Owner:** TheItsProjects
+- **GitHub URL:** [TheItsProjects/HPort](https://github.com/TheItsProjects/HPort)
